@@ -45,3 +45,18 @@
 
     color: #000000;
 }
+h2{
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+}
+.form-area{
+    margin-left: 30px;
+}
+.button_style{
+    width: 430px;
+    margin-top: 100px;
+    margin-left: 30px;
+}
