@@ -88,8 +88,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["submit"] <> '' && (!isset($_P
             $_SESSION["MF_CITY"] = htmlspecialcharsbx($_POST["user_city"]);
 			LocalRedirect($APPLICATION->GetCurPageParam("success=".$arResult["PARAMS_HASH"], Array("success")));
 		}
-		
-//		$arResult["MESSAGE"] = htmlspecialcharsbx($_POST["MESSAGE"]);
+
 		$arResult["AUTHOR_NAME"] = htmlspecialcharsbx($_POST["user_name"]);
         $arResult["AUTHOR_SOURNAME"] = htmlspecialcharsbx($_POST["user_sourname"]);
 		$arResult["AUTHOR_EMAIL"] = htmlspecialcharsbx($_POST["user_email"]);
@@ -107,18 +106,18 @@ elseif($_REQUEST["success"] == $arResult["PARAMS_HASH"])
 
 if(empty($arResult["ERROR_MESSAGE"]))
 {
-	if($USER->IsAuthorized())
-	{
-		$arResult["AUTHOR_NAME"] = $USER->GetFormattedName(false);
-		$arResult["AUTHOR_EMAIL"] = htmlspecialcharsbx($USER->GetEmail());
-	}
-	else
-	{
-		if($_SESSION["MF_NAME"] <> '')
-			$arResult["AUTHOR_NAME"] = htmlspecialcharsbx($_SESSION["MF_NAME"]);
-		if($_SESSION["MF_EMAIL"] <> '')
-			$arResult["AUTHOR_EMAIL"] = htmlspecialcharsbx($_SESSION["MF_EMAIL"]);
-	}
+//	if($USER->IsAuthorized())
+//	{
+//		$arResult["AUTHOR_NAME"] = $USER->GetFormattedName(false);
+//		$arResult["AUTHOR_EMAIL"] = htmlspecialcharsbx($USER->GetEmail());
+//	}
+//	else
+//	{
+//		if($_SESSION["MF_NAME"] <> '')
+//			$arResult["AUTHOR_NAME"] = htmlspecialcharsbx($_SESSION["MF_NAME"]);
+//		if($_SESSION["MF_EMAIL"] <> '')
+//			$arResult["AUTHOR_EMAIL"] = htmlspecialcharsbx($_SESSION["MF_EMAIL"]);
+//	}
 }
 
 if($arParams["USE_CAPTCHA"] == "Y")
