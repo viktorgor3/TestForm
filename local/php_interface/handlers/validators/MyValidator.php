@@ -3,12 +3,34 @@
 namespace Disbut;
 
 use Bitrix\Main\Loader;
+use Bitrix\Main\EventManager;
+AddEventHandler("form", "onFormValidatorBuildList", array("MyValidator", "Validate"));
+Loader::includeModule("form");
 
 class MyValidator
 {
     public $Vars;
     public $Rules;
 
+    function getDescription()
+    {
+        return array(
+            'NAME' => 'dw_email', // идентификатор
+            'DESCRIPTION' => 'E-mail', // наименование
+            'TYPES' => [
+                'text'
+            ], // типы полей
+            'SETTINGS' => [__CLASS__, 'getSettings'], // метод, возвращающий массив настроек
+            'CONVERT_TO_DB' => [__CLASS__, 'toDB'], // метод, конвертирующий массив настроек в строку
+            'CONVERT_FROM_DB' => [__CLASS__, 'fromDB'], // метод, конвертирующий строку настроек в массив
+            'HANDLER' => [__CLASS__, 'doValidate'], // валидатор
+        );
+    }
+
+    function getSettings()
+    {
+        return [];
+    }
 
     public function __construct(array $Vars) {
         $this->Vars = $Vars;
@@ -36,7 +58,8 @@ class MyValidator
 
                     case "REQ" :
                     case "REQUIRED" : {
-                        if (!isset(trim($this->Vars[$key]))) return false;
+                        if (!isset($this->Vars [$key]))return false;
+
                         break;
                     }
 
@@ -44,7 +67,7 @@ class MyValidator
                     case "NUMERIC" : {
                         if (isset($this->Vars[$key])) {
                             if (! is_numeric($this->Vars[$key])){
-                                $APPLICATION->ThrowException("#FIELD_NAME#: не верный формат");
+                                $APPLICATION->ThrowException("не верный формат");
                             } return false;
                         }
                         break;
@@ -55,7 +78,7 @@ class MyValidator
                         if (isset($this->Vars[$key])) {
                             if (! is_numeric($this->Vars[$key])) return false;
                             if ($this->Vars[$key] < $rule_value){
-                                $APPLICATION->ThrowException("#FIELD_NAME#: слишком маленькое значение");
+                                $APPLICATION->ThrowException("слишком маленькое значение");
                             } return false;
                         }
                         break;
@@ -66,7 +89,7 @@ class MyValidator
                         if (isset($this->Vars[$key])) {
                             if (! is_numeric($this->Vars[$key])) return false;
                             if ($this->Vars[$key] > $rule_value){
-                                $APPLICATION->ThrowException("#FIELD_NAME#: слишком большое значение");
+                                $APPLICATION->ThrowException("слишком большое значение");
                             } return false;
                         }
                         break;
@@ -76,7 +99,7 @@ class MyValidator
                     case "MIN_LENGTH" : {
                         if (isset($this->Vars[$key])) {
                             if (strlen($this->Vars[$key]) < $rule_value){
-                                $APPLICATION->ThrowException("#FIELD_NAME#: слишком маленькое значение");
+                                $APPLICATION->ThrowException("слишком маленькое значение");
                             } return false;
                         }
                         break;
@@ -86,7 +109,7 @@ class MyValidator
                     case "MAX_LENGTH" : {
                         if (isset($this->Vars[$key])) {
                             if (strlen($this->Vars[$key]) > $rule_value){
-                                $APPLICATION->ThrowException("#FIELD_NAME#: слишком большое значение");
+                                $APPLICATION->ThrowException("слишком большое значение");
                             } return false;
                         }
                         break;
@@ -96,7 +119,7 @@ class MyValidator
                     case "E-MAIL" : {
                         if (isset($this->Vars[$key])) {
                             if (! filter_var($this->Vars[$key], FILTER_VALIDATE_EMAIL)){
-                                $APPLICATION->ThrowException("#FIELD_NAME#: не верный формат");
+                                $APPLICATION->ThrowException("не верный формат");
                             } return false;
                         }
                         break;
@@ -105,8 +128,8 @@ class MyValidator
                     case "PHONE" :
                     case "TELEPHONE" : {
                         if (isset($this->Vars[$key])) {
-                            if(!preg_match("/^[0-9]{10,10}+$/", $this->Vars[$key])){
-                                $APPLICATION->ThrowException("#FIELD_NAME#: не верный формат");
+                            if(!preg_match("/^[0-9]{1,10}+$/", $this->Vars[$key])){
+                                $APPLICATION->ThrowException("не верный формат");
                             } return false;
                         }
                         break;
@@ -130,19 +153,16 @@ class MyValidator
     }
 }
 
-$Validator = new MyValidator($_POST);
-$Validator->Expect("NAME", "REQ, MIN_LEN, MAX_LEN" );
-$Validator->Expect("SOURNAME", "REQ, MIN_LEN, MAX_LEN" );
-$Validator->Expect("EMAIL", "REQ, EMAIL");
-$Validator->Expect("DATE", "REQ, NUM, MIN, MAX");
-$Validator->Expect("PHONE", "REQ, PHONE");
-$Validator->Expect("CITY", "REQ, MIN_LEN, MAX_LEN");
+$Validator = new MyValidator($_REQUEST);
+$Validator->Expect("user_name", "REQ, MIN_LEN, MAX_LEN" );
+$Validator->Expect("user_sourname", "REQ, MIN_LEN, MAX_LEN" );
+$Validator->Expect("user_email", "REQ, EMAIL");
+$Validator->Expect("user_date", "REQ, NUM, MIN, MAX");
+$Validator->Expect("user_phone", "REQ, PHONE");
+$Validator->Expect("user_city", "REQ, MIN_LEN, MAX_LEN");
 
 $Validator->Validate();
 
-AddEventHandler("form", "onFormValidatorBuildList", array("MyValidator", "Validate"));
-CMain::ThrowException('#FIELD_NAME#');
-Loader::includeModule("form");
 ?>
 
 
