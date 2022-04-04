@@ -1,6 +1,7 @@
 <?php
 if(!defined("B_PROLOG_INCLUDED")||B_PROLOG_INCLUDED!==true)die();
 
+CBitrixComponent::includeComponentClass("test_form:main.feedback");
 /**
  * Bitrix vars
  *
@@ -24,7 +25,7 @@ $arParams["OK_TEXT"] = trim($arParams["OK_TEXT"]);
 if($arParams["OK_TEXT"] == '')
 	$arParams["OK_TEXT"] = GetMessage("MF_OK_MESSAGE");
 
-if($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["submit"] <> '' && (!isset($_POST["PARAMS_HASH"]) || $arResult["PARAMS_HASH"] === $_POST["PARAMS_HASH"]))
+if($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["submit"] <> '' && (!isset($_POST["PARAMS_HASH"]) || $arResult["PARAMS_HASH"]=== $_POST["PARAMS_HASH"]))
 {
 	$arResult["ERROR_MESSAGE"] = array();
 	if(check_bitrix_sessid())
@@ -46,6 +47,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["submit"] <> '' && (!isset($_P
 		}
 		if(mb_strlen($_POST["user_email"]) > 1 && !check_email($_POST["user_email"]))
 			$arResult["ERROR_MESSAGE"][] = GetMessage("MF_EMAIL_NOT_VALID");
+        if(empty($arResult["ERROR_MESSAGE"])) {
+            $cMyVal = new CMyValidator();
+            $this->__construct();
+            $this->Expect();
+            $this->Validate();
+            $arResult["ERROR_MESSAGE"][] = $cMyVal->Validate();
+        }
+
 		if($arParams["USE_CAPTCHA"] == "Y")
 		{
 			$captcha_code = $_POST["captcha_sid"];

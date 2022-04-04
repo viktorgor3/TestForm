@@ -1,4 +1,4 @@
-<?php
+<?php/*
 use Bitrix\Main\Loader;
 use Bitrix\Main\EventManager;
 ?>
@@ -8,4 +8,5 @@ EventManager::getInstance()->addEventHandlerCompatible('form', 'onFormValidatorB
     'Disbut\MyValidator',
     'Validate',
 ]);
+*/
 ?>

@@ -1,36 +1,7 @@
 <?php
-
-namespace Disbut;
-
-use Bitrix\Main\Loader;
-use Bitrix\Main\EventManager;
-AddEventHandler("form", "onFormValidatorBuildList", array("MyValidator", "Validate"));
-Loader::includeModule("form");
-
-class MyValidator
-{
+class CMyValidator extends CBitrixComponent{
     public $Vars;
     public $Rules;
-
-    function getDescription()
-    {
-        return array(
-            'NAME' => 'dw_email', // идентификатор
-            'DESCRIPTION' => 'E-mail', // наименование
-            'TYPES' => [
-                'text'
-            ], // типы полей
-            'SETTINGS' => [__CLASS__, 'getSettings'], // метод, возвращающий массив настроек
-            'CONVERT_TO_DB' => [__CLASS__, 'toDB'], // метод, конвертирующий массив настроек в строку
-            'CONVERT_FROM_DB' => [__CLASS__, 'fromDB'], // метод, конвертирующий строку настроек в массив
-            'HANDLER' => [__CLASS__, 'doValidate'], // валидатор
-        );
-    }
-
-    function getSettings()
-    {
-        return [];
-    }
 
     public function __construct(array $Vars) {
         $this->Vars = $Vars;
@@ -128,7 +99,7 @@ class MyValidator
                     case "PHONE" :
                     case "TELEPHONE" : {
                         if (isset($this->Vars[$key])) {
-                            if(!preg_match("/^[0-9]{1,10}+$/", $this->Vars[$key])){
+                            if(!preg_match("/#^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$#/", $this->Vars[$key])){
                                 $APPLICATION->ThrowException("не верный формат");
                             } return false;
                         }
@@ -162,9 +133,3 @@ $Validator->Expect("user_phone", "REQ, PHONE");
 $Validator->Expect("user_city", "REQ, MIN_LEN, MAX_LEN");
 
 $Validator->Validate();
-
-?>
-
-
-
-
