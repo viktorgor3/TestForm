@@ -10,22 +10,6 @@ window.onload = function () {
 
     document.querySelector('.btn').onclick = function myFunction(e) {
         e.preventDefault();
-        if (!reg.test(inp.value)) {
-            return err;
-        } else {
-            return success;
-        }
-    };
-    // function validate(regex, inp){
-    // return regex.test(inp);
-    // }
-    // function notValid(inp, el){
-    //     inp.classList.add('.is_invalid');
-    //     el=document.getElementsByClassName('text-danger');
-    // }
-    // function valid(inp, el){
-    //     inp.classList.remove('.is_invalid');
-    //     inp.classList.add('.is_valid');
-    //     el=document.getElementsByClassName('text-success');
-    // }
+
+    }
 }
