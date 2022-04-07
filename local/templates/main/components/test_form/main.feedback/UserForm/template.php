@@ -51,7 +51,7 @@ use Bitrix\Main\localization\Loc;
                 </div>
                 <div class="form-group">
                 <label for="user_phone">Телефон</label>
-                    <input type="number" class="form-control" name="user_phone" id="user_phone" value="<?=$arResult["AUTHOR_PHONE"]?>" placeholder= '+7(___)___-__-__' <?=(empty($arParams["REQUIRED_FIELDS"]) || in_array("PHONE", $arParams["REQUIRED_FIELDS"]))? '*' : '';?>/>
+                    <input type="text" class="form-control" name="user_phone" value="<?=$arResult["AUTHOR_PHONE"]?>" placeholder= '+7(___)___-__-__' <?=(empty($arParams["REQUIRED_FIELDS"]) || in_array("PHONE", $arParams["REQUIRED_FIELDS"]))? '*' : '';?>/>
                     </div>
                 <div class="form-group">
                 <label for="user_city">Город</label>

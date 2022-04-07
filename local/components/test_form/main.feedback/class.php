@@ -1,19 +1,19 @@
 <?php
 class CMyValidator extends CBitrixComponent{
-    public $Vars;
+    public $Vars ;
     public $Rules;
 
-    public function __construct(array $Vars) {
-        $this->Vars = $Vars;
+    public function setData(array $vars) {
+        $this->Vars = $vars;
     }
 
     public function Expect($key, $rule) {
         $this->Rules[$key] = $rule;
     }
 
-    public function Validate() {
-
-        global $APPLICATION;
+    public function Validate()
+    {
+        $arResult = [];
 
         foreach ($this->Rules as $key => $rule) {
             $rules = explode(",", $rule);
@@ -24,92 +24,123 @@ class CMyValidator extends CBitrixComponent{
                     $rule = $words[0];
                     $rule_value = $words[1];
                 }
-
-                switch (strtoupper(trim($rule))) {
-
-                    case "REQ" :
-                    case "REQUIRED" : {
-                        if (!isset($this->Vars [$key]))return false;
-
-                        break;
-                    }
-
-                    case "NUM" :
-                    case "NUMERIC" : {
-                        if (isset($this->Vars[$key])) {
-                            if (! is_numeric($this->Vars[$key])){
-                                $APPLICATION->ThrowException("не верный формат");
-                            } return false;
+                if (isset($this->Vars[$key])) {
+                    switch (strtoupper(trim($rule))) {
+                        case "REQ" :
+                        case "REQUIRED" :
+                        {
+                            switch ($key) {
+                                case "user_name":
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_NAME");
+//                                    echo "<pre>".print_r($arResult, 1)."</pre>";
+                                    break;
+                                case "user_sourname":
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_SOURNAME");
+                                    break;
+                                case "user_email":
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_EMAIL");
+                                    break;
+                                case "user_date":
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_DATE");
+                                    break;
+                                case "user_phone":
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_PHONE");
+                                    break;
+                                case "user_city":
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_CITY");
+                                    break;
+                            }
+                            break;
                         }
-                        break;
-                    }
-
-                    case "MIN" :
-                    case "MINIMUM" : {
-                        if (isset($this->Vars[$key])) {
-                            if (! is_numeric($this->Vars[$key])) return false;
-                            if ($this->Vars[$key] < $rule_value){
-                                $APPLICATION->ThrowException("слишком маленькое значение");
-                            } return false;
+                        case "NUM" :
+                        case "NUMERIC" :
+                        {
+                            if (!is_numeric($this->Vars[$key])||!preg_match('/^[0-9]{10,10}$/', $key === "user_phone")){
+                                if ($key === "user_phone"){
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_PHONE");
+                                } elseif ($key === "user_date") {
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_DATE");
+                                }
+                            }
+                            break;
                         }
-                        break;
-                    }
-
-                    case "MAX" :
-                    case "MAXIMUM" : {
-                        if (isset($this->Vars[$key])) {
-                            if (! is_numeric($this->Vars[$key])) return false;
-                            if ($this->Vars[$key] > $rule_value){
-                                $APPLICATION->ThrowException("слишком большое значение");
-                            } return false;
+                        case "MIN" :
+                        case "MINIMUM" :
+                        {
+                            if (!is_numeric($this->Vars[$key]) && isset($rule_value) && $this->Vars[$key] < $rule_value) {
+                                if ($key === "user_phone") {
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_PHONE");
+                                }
+                            }
+                            break;
                         }
-                        break;
-                    }
-
-                    case "MIN_LEN" :
-                    case "MIN_LENGTH" : {
-                        if (isset($this->Vars[$key])) {
-                            if (strlen($this->Vars[$key]) < $rule_value){
-                                $APPLICATION->ThrowException("слишком маленькое значение");
-                            } return false;
+                        case "MAX" :
+                        case "MAXIMUM" :
+                        {
+                            if (!is_numeric($this->Vars[$key]) && isset($rule_value) && $this->Vars[$key] > $rule_value) {
+                                if ($key === "user_phone") {
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_PHONE");
+                                }
+                            }
+                            break;
                         }
-                        break;
-                    }
-
-                    case "MAX_LEN" :
-                    case "MAX_LENGTH" : {
-                        if (isset($this->Vars[$key])) {
-                            if (strlen($this->Vars[$key]) > $rule_value){
-                                $APPLICATION->ThrowException("слишком большое значение");
-                            } return false;
+                        case "MIN_LEN" :
+                        case "MIN_LENGTH" :
+                        {
+                            if (strlen($this->Vars[$key]) < $rule_value) {
+                                if ($key === "user_name") {
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_NAME");
+                                } elseif ($key === "user_sourname") {
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_SOURNAME");
+                                } elseif ($key === "user_city") {
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_CITY");
+                                }
+                            }
+                            break;
                         }
-                        break;
-                    }
-
-                    case "EMAIL" :
-                    case "E-MAIL" : {
-                        if (isset($this->Vars[$key])) {
-                            if (! filter_var($this->Vars[$key], FILTER_VALIDATE_EMAIL)){
-                                $APPLICATION->ThrowException("не верный формат");
-                            } return false;
+                        case "MAX_LEN" :
+                        case "MAX_LENGTH" :
+                        {
+                            if (strlen($this->Vars[$key]) > $rule_value) {
+                                if ($key === "user_name") {
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_NAME");
+                                } elseif ($key === "user_sourname") {
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_SOURNAME");
+                                } elseif ($key === "user_email") {
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_EMAIL");
+                                } elseif ($key === "user_city") {
+                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_CITY");
+                                }
+                            }
+                            break;
                         }
-                        break;
-                    }
-
-                    case "PHONE" :
-                    case "TELEPHONE" : {
-                        if (isset($this->Vars[$key])) {
-                            if(!preg_match("/#^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$#/", $this->Vars[$key])){
-                                $APPLICATION->ThrowException("не верный формат");
-                            } return false;
+                        case "EMAIL" :
+                        case "E-MAIL" :
+                        {
+                            if (isset($this->Vars[$key])) {
+                                if (!filter_var($this->Vars[$key], FILTER_VALIDATE_EMAIL)) {
+                                    if ($key === "user_email") {
+                                        $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_EMAIL");
+                                    }
+                                }
+                                break;
+                            }
                         }
-                        break;
+//                        case "PHONE" :
+//                        case "TELEPHONE" :
+//                        {
+//                            if (!preg_match('/^[0-9]{10}$/', $this->Vars[$key])) {
+//                                if ($key === "user_phone") {
+//                                    $arResult["ERROR_MESSAGE"][] = GetMessage("MF_REQ_PHONE");
+//                                }
+//                            }
+//                            break;
+//                        }
                     }
                 }
             }
         }
-
-        return true;
+        return $arResult;
     }
     public function __get($var) {
         if (isset($this->$var)) {
@@ -119,17 +150,6 @@ class CMyValidator extends CBitrixComponent{
                 return $this->Vars[$var];
             }
         }
-
         return NULL;
     }
 }
-
-$Validator = new MyValidator($_REQUEST);
-$Validator->Expect("user_name", "REQ, MIN_LEN, MAX_LEN" );
-$Validator->Expect("user_sourname", "REQ, MIN_LEN, MAX_LEN" );
-$Validator->Expect("user_email", "REQ, EMAIL");
-$Validator->Expect("user_date", "REQ, NUM, MIN, MAX");
-$Validator->Expect("user_phone", "REQ, PHONE");
-$Validator->Expect("user_city", "REQ, MIN_LEN, MAX_LEN");
-
-$Validator->Validate();
